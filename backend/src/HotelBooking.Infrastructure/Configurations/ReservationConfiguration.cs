@@ -6,8 +6,17 @@ namespace HotelBooking.Infrastructure.Configurations;
 
 public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 {
+    /// <summary>
+    /// PostgreSQL exclusion constraint that makes overlapping active bookings of the same room impossible.
+    /// EF Core can't model it, so it's created with raw SQL in the AddReservationOverlapConstraint migration.
+    /// </summary>
+    public const string NoOverlapConstraint = "ex_reservations_room_no_overlap";
+
     public void Configure(EntityTypeBuilder<Reservation> builder)
     {
+        builder.ToTable(t => t.HasCheckConstraint(
+            "ck_reservations_check_out_after_check_in", "check_out_date > check_in_date"));
+
         builder.Property(r => r.Status).HasConversion<string>().HasMaxLength(20);
         builder.Property(r => r.TotalPrice).HasPrecision(10, 2);
 

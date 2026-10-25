@@ -20,7 +20,15 @@ public class AuthService(AppDbContext db, IPasswordHasher<User> hasher, TokenSer
         var user = new User(email, request.FullName, UserRole.Guest);
         user.SetPasswordHash(hasher.HashPassword(user, request.Password));
         db.Users.Add(user);
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (DbErrors.IsUniqueViolation(ex))
+        {
+            // Two simultaneous registrations with the same email.
+            throw new ConflictException("An account with this email already exists.");
+        }
 
         return CreateResponse(user);
     }

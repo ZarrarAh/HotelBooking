@@ -93,7 +93,10 @@ namespace HotelBooking.Infrastructure.Migrations
                     b.HasIndex("RoomId", "CheckInDate", "CheckOutDate")
                         .HasDatabaseName("ix_reservations_room_id_check_in_date_check_out_date");
 
-                    b.ToTable("reservations", (string)null);
+                    b.ToTable("reservations", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_reservations_check_out_after_check_in", "check_out_date > check_in_date");
+                        });
                 });
 
             modelBuilder.Entity("HotelBooking.Domain.Room", b =>

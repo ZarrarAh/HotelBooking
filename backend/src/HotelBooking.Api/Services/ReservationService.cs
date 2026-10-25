@@ -28,7 +28,15 @@ public class ReservationService(AppDbContext db, TimeProvider time)
         var reservation = Reservation.Create(
             room, guestId, request.CheckIn, request.CheckOut, request.NumberOfGuests, UtcNow);
         db.Reservations.Add(reservation);
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (DbErrors.IsReservationOverlap(ex))
+        {
+            // Another request booked the same room between our check and our insert.
+            throw new ConflictException($"Room {room.Number} was just booked by someone else for those nights.");
+        }
 
         return await GetResponseAsync(reservation.Id);
     }
