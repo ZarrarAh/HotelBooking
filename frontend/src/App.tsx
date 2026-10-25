@@ -5,6 +5,7 @@ import Layout from './components/Layout'
 import BookPage from './pages/guest/BookPage'
 import MyBookingsPage from './pages/guest/MyBookingsPage'
 import SearchPage from './pages/guest/SearchPage'
+import FrontDeskPage from './pages/staff/FrontDeskPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 
@@ -27,7 +28,7 @@ export default function App() {
             />
             <Route
               path="staff"
-              element={<ProtectedRoute role="Staff"><h1>Front desk</h1></ProtectedRoute>}
+              element={<ProtectedRoute role="Staff"><FrontDeskPage /></ProtectedRoute>}
             />
             <Route path="*" element={<p className="empty">Page not found.</p>} />
           </Route>
