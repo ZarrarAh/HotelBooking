@@ -16,5 +16,22 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build: ./backend
+    container_name: hotelbooking-api
+    environment:
+      # Double underscores map to nested config keys, e.g. ConnectionStrings:Default.
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=${POSTGRES_DB:-hotelbooking};Username=${POSTGRES_USER:-hotel};Password=${POSTGRES_PASSWORD:-hotel_dev_password}"
+      Database__InitializeOnStartup: "true"
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-docker-demo-signing-key-change-me-0123456789}
+      Seed__StaffEmail: ${STAFF_EMAIL:-staff@hotel.local}
+      Seed__StaffPassword: ${STAFF_PASSWORD:-Staff123!}
+      Swagger__Enabled: "true"
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   pgdata:
