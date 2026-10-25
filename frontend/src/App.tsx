@@ -1,15 +1,31 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import AuthProvider from './auth/AuthProvider'
+import ProtectedRoute from './auth/ProtectedRoute'
 import Layout from './components/Layout'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<h1>Find a room</h1>} />
-          <Route path="*" element={<p className="empty">Page not found.</p>} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<h1>Find a room</h1>} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route
+              path="my-bookings"
+              element={<ProtectedRoute role="Guest"><h1>My bookings</h1></ProtectedRoute>}
+            />
+            <Route
+              path="staff"
+              element={<ProtectedRoute role="Staff"><h1>Front desk</h1></ProtectedRoute>}
+            />
+            <Route path="*" element={<p className="empty">Page not found.</p>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
