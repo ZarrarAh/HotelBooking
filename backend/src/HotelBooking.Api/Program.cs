@@ -1,12 +1,18 @@
+using System.Text.Json.Serialization;
 using HotelBooking.Api.Data;
+using HotelBooking.Api.Services;
 using HotelBooking.Domain;
 using HotelBooking.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+// Enums travel as strings ("Suite") rather than numbers, which is friendlier for the frontend.
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<RoomService>();
 
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("Default")
