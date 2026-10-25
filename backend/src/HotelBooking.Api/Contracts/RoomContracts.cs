@@ -15,6 +15,13 @@ public record RoomResponse(
         new(room.Id, room.Number, room.Type, room.Capacity, room.PricePerNight, room.Description);
 }
 
+public record RoomRequest(
+    [Required, MaxLength(10)] string Number,
+    RoomType Type,
+    [Range(1, 10)] int Capacity,
+    [Range(1, 100_000)] decimal PricePerNight,
+    [MaxLength(500)] string? Description);
+
 public record AvailableRoomResponse(
     int Id,
     string Number,
