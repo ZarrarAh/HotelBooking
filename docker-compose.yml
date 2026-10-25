@@ -32,6 +32,22 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      # The slim ASP.NET image has no curl, so call /health with bash's built-in TCP support.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' >&3 && grep -q healthy <&3"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  web:
+    build: ./frontend
+    container_name: hotelbooking-web
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   pgdata:
