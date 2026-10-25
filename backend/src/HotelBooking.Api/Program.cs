@@ -1,9 +1,25 @@
+using HotelBooking.Api.Data;
+using HotelBooking.Domain;
+using HotelBooking.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Services.AddInfrastructure(
+    builder.Configuration.GetConnectionString("Default")
+    ?? throw new InvalidOperationException("Connection string 'Default' is not configured."));
+builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddSingleton(TimeProvider.System);
+
 var app = builder.Build();
+
+if (app.Configuration.GetValue<bool>("Database:InitializeOnStartup"))
+{
+    await DatabaseInitializer.InitializeAsync(app.Services);
+}
 
 if (app.Environment.IsDevelopment())
 {
