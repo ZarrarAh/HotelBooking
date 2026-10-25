@@ -39,7 +39,7 @@ public class Reservation
         if (numberOfGuests < 1)
             throw new DomainException("At least one guest is required.");
         if (numberOfGuests > room.Capacity)
-            throw new DomainException($"Room {room.Number} fits at most {room.Capacity} guests.");
+            throw new DomainException($"Room {room.Number} sleeps at most {room.Capacity}.");
 
         var reservation = new Reservation
         {

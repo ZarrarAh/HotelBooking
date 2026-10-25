@@ -25,6 +25,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<ReservationService>();
 
 var app = builder.Build();
 
