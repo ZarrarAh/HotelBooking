@@ -37,7 +37,7 @@ if (app.Configuration.GetValue<bool>("Database:InitializeOnStartup"))
     await DatabaseInitializer.InitializeAsync(app.Services);
 }
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Swagger:Enabled"))
 {
     // Built-in OpenAPI document at /openapi/v1.json, rendered by Swagger UI at /swagger.
     app.MapOpenApi();
