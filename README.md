@@ -1,5 +1,7 @@
 # Harbor Hotel – Hotel Booking System
 
+> **About this project:** This is my first project built with [Claude Code](https://claude.com/claude-code). I used it both to learn how Claude Code works and to become a better developer. I started in plan mode, without writing any code. I described what I wanted and asked for a folder structure and a list of small steps, with the backend finished before the frontend. I reviewed the plan before approving it. Claude Code then implemented the plan one step at a time, building, testing and committing after each step, so the git history reads as a step-by-step build log. Along the way I focused on understanding the architecture rather than every line: why the backend is split into layers, how double booking is prevented at the database level, and how JWT roles protect the API. I treated it like pair programming with a senior developer, where I set the direction and reviewed the result.
+
 A full-stack hotel booking system. Guests search for free rooms, book them and manage their bookings. Front-desk staff see the day's arrivals and departures and check guests in and out.
 
 **Stack:** ASP.NET Core Web API (.NET 10) · EF Core + PostgreSQL · JWT auth · xUnit + Testcontainers · React + TypeScript + Vite · Docker Compose
