@@ -3,6 +3,7 @@ import AuthProvider from './auth/AuthProvider'
 import ProtectedRoute from './auth/ProtectedRoute'
 import Layout from './components/Layout'
 import BookPage from './pages/guest/BookPage'
+import MyBookingsPage from './pages/guest/MyBookingsPage'
 import SearchPage from './pages/guest/SearchPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -22,7 +23,7 @@ export default function App() {
             />
             <Route
               path="my-bookings"
-              element={<ProtectedRoute role="Guest"><h1>My bookings</h1></ProtectedRoute>}
+              element={<ProtectedRoute role="Guest"><MyBookingsPage /></ProtectedRoute>}
             />
             <Route
               path="staff"
