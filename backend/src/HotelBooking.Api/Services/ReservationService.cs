@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using HotelBooking.Api.Contracts;
 using HotelBooking.Api.Errors;
 using HotelBooking.Domain;
@@ -64,6 +65,46 @@ public class ReservationService(AppDbContext db, TimeProvider time)
         reservation.Cancel(UtcNow);
         await db.SaveChangesAsync();
         return ReservationResponse.From(reservation);
+    }
+
+    public DateOnly Today => DateOnly.FromDateTime(UtcNow);
+
+    /// <summary>Guests due to arrive on the date, including those already checked in.</summary>
+    public Task<List<ReservationResponse>> GetArrivalsAsync(DateOnly date) =>
+        ListAsync(r => r.CheckInDate == date
+            && (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.CheckedIn));
+
+    /// <summary>Guests due to leave on the date, including those already checked out.</summary>
+    public Task<List<ReservationResponse>> GetDeparturesAsync(DateOnly date) =>
+        ListAsync(r => r.CheckOutDate == date
+            && (r.Status == ReservationStatus.CheckedIn || r.Status == ReservationStatus.CheckedOut));
+
+    public async Task<ReservationResponse> CheckInAsync(int id)
+    {
+        var reservation = await WithDetails.FirstOrDefaultAsync(r => r.Id == id)
+            ?? throw new NotFoundException($"Reservation {id} not found.");
+        reservation.CheckIn(UtcNow);
+        await db.SaveChangesAsync();
+        return ReservationResponse.From(reservation);
+    }
+
+    public async Task<ReservationResponse> CheckOutAsync(int id)
+    {
+        var reservation = await WithDetails.FirstOrDefaultAsync(r => r.Id == id)
+            ?? throw new NotFoundException($"Reservation {id} not found.");
+        reservation.CheckOut(UtcNow);
+        await db.SaveChangesAsync();
+        return ReservationResponse.From(reservation);
+    }
+
+    private async Task<List<ReservationResponse>> ListAsync(Expression<Func<Reservation, bool>> filter)
+    {
+        var reservations = await WithDetails
+            .AsNoTracking()
+            .Where(filter)
+            .OrderBy(r => r.Room.Number)
+            .ToListAsync();
+        return reservations.Select(ReservationResponse.From).ToList();
     }
 
     private async Task<Reservation> FindVisibleAsync(int id, int userId, bool isStaff)
